@@ -1,1 +1,94 @@
+let w = 500;
+let h = 500;
+
+let vLetters = 5;
+let lList = [];
+let boxSize = 40;
+
+let score = 190;
+
+let pageBG = 150;
+
+let scoreSound;
+let soundPlays = 0;
+
+function preload(){
+  soundFormats('mp3');
+  scoreSound = loadSound('scoreSound.mp3');
+}
+
+function setup() {
+  createCanvas(w, h);
+  background(pageBG);
+  rectMode(CENTER);
+  
+  fill(0);
+  for (let i = 0; i < vLetters; ++i){
+    let r = Math.floor(Math.random() * 25);
+    lList[i] = r + 65;
+  }
+}
+
+function draw() {
+  displayLetters();
+  displayScore();
+}
+
+function keyPressed(){
+  if (keyCode == lList[0]){
+    score += 5;
+    for (let i = 0; i < vLetters - 1; ++i){
+      lList[i] = lList[i + 1];
+    }
+    let r = Math.floor(Math.random() * 25);
+    lList[vLetters - 1] = r + 65;
+  }
+}
+
+function displayLetters(){
+  if (score % 200 == 0){
+    if (soundPlays == 0){
+      scoreSound.play();
+      soundPlays++;
+    }
+  } else {
+    soundPlays = 0;
+  }
+  let x = (width / 2) - ((vLetters * (boxSize + 2)) / 2);
+  let y = height / 2;
+  
+  let boxBG = 255;
+  let letterC = 0;
+  let boxFade = (boxBG - pageBG) / vLetters;
+  let letterFade = pageBG / vLetters;
+  
+  for (let i = 0; i < vLetters; ++i){
+    noStroke();
+    fill(boxBG);
+
+    boxBG -= boxFade;
+    if (boxBG < pageBG){ boxBG = pageBG; }
+
+    letterFade += letterFade;
+    if (letterC > pageBG) { letterC = pageBG; }
+    
+    rect(x, y, boxSize, boxSize);
+    fill(letterC);
+    textSize(boxSize / 2);
+    textAlign(CENTER);
+    text(String.fromCharCode(lList[i]), x, y + boxSize / 6);
+    
+    x += boxSize + 2;
+  }
+}
+
+function displayScore(){
+  fill(0);
+  textAlign(LEFT);
+  let scoreBoxWidth = score.toString().length * (boxSize / 2);
+  rect(0, 0, scoreBoxWidth + 15, boxSize + 10);
+  fill(255);
+  text(score, 0, boxSize / 2);
+}
+
 
